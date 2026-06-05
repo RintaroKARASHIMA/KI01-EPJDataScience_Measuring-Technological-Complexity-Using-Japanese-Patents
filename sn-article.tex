@@ -1,0 +1,434 @@
+%Version 3.1 December 2024
+% See section 11 of the User Manual for version history
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                                                 %%
+%% Please do not use \input{...} to include other tex files.       %%
+%% Submit your LaTeX manuscript as one .tex document.              %%
+%%                                                                 %%
+%% All additional figures and files should be attached             %%
+%% separately and not embedded in the \TeX\ document itself.       %%
+%%                                                                 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%\documentclass[referee,sn-basic]{sn-jnl}% referee option is meant for double line spacing
+
+%%=======================================================%%
+%% to print line numbers in the margin use lineno option %%
+%%=======================================================%%
+
+\documentclass[lineno,pdflatex,sn-mathphys-num]{sn-jnl}% Math and Physical Sciences Numbered Reference Style
+
+%%=========================================================================================%%
+%% the documentclass is set to pdflatex as default. You can delete it if not appropriate.  %%
+%%=========================================================================================%%
+
+%%\documentclass[sn-basic]{sn-jnl}% Basic Springer Nature Reference Style/Chemistry Reference Style
+
+%%Note: the following reference styles support Namedate and Numbered referencing. By default the style follows the most common style. To switch between the options you can add or remove Numbered in the optional parenthesis.
+%%The option is available for: sn-basic.bst, sn-chicago.bst%
+
+%%\documentclass[pdflatex,sn-nature]{sn-jnl}% Style for submissions to Nature Portfolio journals
+%%\documentclass[pdflatex,sn-basic]{sn-jnl}% Basic Springer Nature Reference Style/Chemistry Reference Style
+%%\documentclass[pdflatex,sn-mathphys-ay]{sn-jnl}% Math and Physical Sciences Author Year Reference Style
+%%\documentclass[pdflatex,sn-aps]{sn-jnl}% American Physical Society (APS) Reference Style
+%%\documentclass[pdflatex,sn-vancouver-num]{sn-jnl}% Vancouver Numbered Reference Style
+%%\documentclass[pdflatex,sn-vancouver-ay]{sn-jnl}% Vancouver Author Year Reference Style
+%%\documentclass[pdflatex,sn-apa]{sn-jnl}% APA Reference Style
+%%\documentclass[pdflatex,sn-chicago]{sn-jnl}% Chicago-based Humanities Reference Style
+
+%%%% Standard Packages
+%%<additional latex packages if required can be included here>
+
+\usepackage{graphicx}%
+\usepackage{multirow}%
+\usepackage{amsmath,amssymb,amsfonts}%
+\usepackage{amsthm}%
+\usepackage{mathrsfs}%
+\usepackage[title]{appendix}%
+\usepackage{xcolor}%
+\usepackage{textcomp}%
+\usepackage{manyfoot}%
+\usepackage{booktabs}%
+\usepackage{algorithm}%
+\usepackage{algorithmicx}%
+\usepackage{algpseudocode}%
+\usepackage{listings}%
+\usepackage{url}%
+%%%%
+
+%% as per the requirement new theorem styles can be included as shown below
+\theoremstyle{thmstyleone}%
+\newtheorem{theorem}{Theorem}%  meant for continuous numbers
+%%\newtheorem{theorem}{Theorem}[section]% meant for sectionwise numbers
+%% optional argument [theorem] produces theorem numbering sequence instead of independent numbers for Proposition
+\newtheorem{proposition}[theorem]{Proposition}%
+%%\newtheorem{proposition}{Proposition}% to get separate numbers for theorem and proposition etc.
+
+\theoremstyle{thmstyletwo}%
+\newtheorem{example}{Example}%
+\newtheorem{remark}{Remark}%
+
+\theoremstyle{thmstylethree}%
+\newtheorem{definition}{Definition}%
+
+\raggedbottom
+
+\begin{document}
+
+\title[Measuring Technological Complexity Using Japanese Patents]{Measuring Technological Complexity Using Japanese Patents}
+
+\author[1]{\fnm{Rintaro} \sur{Karashima}}
+\equalcont{These authors contributed equally to this work.}
+
+\author*[1,2]{\fnm{Hiroyasu} \sur{Inoue}}
+\email{inoue@gsis.u-hyogo.ac.jp}
+\equalcont{These authors contributed equally to this work.}
+
+\affil*[1]{\orgdiv{Graduate School of Information Science}, \orgname{University of Hyogo}, \orgaddress{\street{7-1-28 Minatojima-minamimachi, Chuo-ku}, \city{Kobe}, \postcode{650-0047}, \state{Hyogo}, \country{Japan}}}
+
+\affil[2]{\orgdiv{Center for Computational Science}, \orgname{RIKEN}, \orgaddress{\street{7-1-26 Minatojima-minamimachi, Chuo-ku}, \city{Kobe}, \postcode{650-0047}, \state{Hyogo}, \country{Japan}}}
+
+\abstract{As international competition intensifies in technologies, nations need to identify key technologies to foster innovation.
+However, the identification is challenging due to the independent and inherently complex nature of technologies.
+Traditionally, analyses of technological portfolios have been limited to simple evaluations, indicating merely whether a technology is specialized.
+We propose evaluating the Technological Complexity Index (TCI) at the corporate level using Japanese patent data spanning fiscal years 1981 to 2010.
+TCI is a network based measure that assigns higher values to technologies that are selectively pursued by corporations with broad and distinctive technological portfolios, and thus provides a relative indicator of technological sophistication within the observed system.
+By moving from regional aggregation to the corporate level, the approach directly leverages heterogeneity in corporate portfolios, which is largely averaged out when activity is pooled within regions.
+Specifically, we analyze a bipartite network composed of 1,939 corporations connected to technological fields categorized into either 35 or 124 classifications.
+Our results show that the corporate level approach yields stable and consistent technology rankings even under finer classifications, supporting measurement reliability and enabling comparisons across alternative classification schemes.
+The estimates highlight high complexity activity in technology fields related to pharmaceuticals and food chemistry, reflecting Japan's industrial focus during the study period.
+In addition, because the corporate based estimates can be consistently compared across regions and technology fields by attributing corporations to locations, they enable a more targeted identification of regional technological advantages and provide a quantitative basis for prioritizing technology domains in regional industrial policy and innovation strategy.}
+
+\keywords{Technological Complexity Index, Japanese patents, corporate level analysis, bipartite networks, method of reflections, economic complexity}
+
+\maketitle
+
+\section{Introduction}\label{section:Introduction}
+
+Technological capability is widely recognized as a key determinant of national competitiveness and economic growth \cite{EC_SSP_nodate,Teixeira2022,NISTEP_nodate}.
+Understanding and measuring such capability is therefore essential for analyzing the sources of innovation and designing effective industrial and science policies \cite{gault2023handbook}.
+
+Historically, technological capability has been assessed using quantitative indicators derived from bibliographic data such as patents and publications.
+These include measures based on counts of outputs as well as citation-based indicators that incorporate information on technological impact and diffusion \cite{jaffe2019patent,aristodemou2018citations}.
+While these indicators provide useful insights into the production and influence of knowledge, they primarily evaluate individual inventions or outputs.
+As a result, they do not capture how technological capabilities are structured across actors and technological fields.
+Understanding such structure requires moving beyond individual outputs to consider how actors are connected to technologies.
+
+Technological capabilities emerge from interactions between economic actors, such as regions and corporations, and the technologies they develop and combine \cite{katz2016complex}.
+These interactions form structured patterns that reflect how capabilities are distributed across actors and technologies.
+Empirical studies have shown that such patterns often exhibit nested structures, in which broadly capable actors participate in both common and rare technologies, while more specialized actors tend to be active primarily in ubiquitous technologies \cite{hidalgo2009eci, ren2020bridging}.
+Such nested structures reflect differences in the underlying capabilities required to produce technologies.
+Understanding this structure is essential for identifying the key technologies and actors that shape technological capability and for developing effective science and technology strategies.
+However, because these systems are organized through complex and structured interactions, identifying such key elements remains difficult.
+
+The method of reflections\cite{hidalgo2009eci} provides a framework for addressing this limitation by jointly considering the diversity of actors and the ubiquity of technologies.
+This approach enables the quantification of economic and technological complexity and reveals structural patterns that are not captured by conventional indicators.
+Building on this framework, a growing body of research has developed alternative complexity measures and extended the approach to different domains \cite{Hidalgo2021,Hidalgo2023,Hausmann2024,Balland2022,diodato2024handbook}.
+In particular, recent studies have applied this methodology to patent data to measure technological complexity, pioneered by Balland and Rigby \cite{balland2017tci}.
+Subsequent studies have extended patent-based complexity analysis to Europe \cite{Pinheiro2022,ballandandboschma2021} and to Asian economies \cite{Jun2023,Abay2024}.
+
+Despite these advances, most empirical applications have focused on the regional or national level \cite{Hidalgo2021}.
+However, technological capabilities ultimately arise from the activities of corporations that develop, combine, and apply technologies.
+Analyzing technological complexity at the corporate level may therefore provide a more direct perspective on the micro-level structure of innovation systems and allow finer comparisons of technological capabilities and regional specializations.
+
+Our study applies the method of reflections to an extensive set of Japanese patent records to quantify technological complexity at the corporation level.
+By constructing bipartite networks linking corporations to technology classes, we develop a detailed measure of technological sophistication.
+Our analysis investigates the relationships between technological complexity, ubiquity, and the average corporate diversity of patent technologies, providing new insights into the nature of advanced capabilities.
+The model developed at the corporation level provides a more robust and consistent assessment of technology than regional-level analyses, particularly for finely classified technological fields.
+Importantly, this study shows that a corporation-level approach enables a direct comparison of technological characteristics across different regions.
+By focusing on corporations within specific regions, we can identify distinct industrial specializations and reveal which technologies are complex within each region's unique context.
+The analyses from this study provide insights for creating tailored industrial policies and more accurately identifying the key technologies vital for future growth.
+
+The rest of this paper is organized as follows.
+In the Results section, we present the ubiquity and complexity of technological fields presented by the patent data, followed by a detailed analysis of technological trends.
+In the Discussion section, we provide a critical analysis of our findings and discuss the implications of our results.
+Finally, in the Methods section, we detail the data processing and methods used in our analysis.
+
+\section{Results}\label{section:Results}
+
+\subsection{Characteristics of Technologies}\label{subsection:characteristics}
+
+In this study, we use the method of reflections to quantify the structural characteristics of technologies based on corporate patent publications from 1,939 corporations filed between fiscal years 1981 and 2010 (see Methods section).
+First, we define ubiquity (or degree centrality) $K_{T,0}$ as the number of corporations connected to a technology which lower value indicates that the technology is more rare.
+Similarly, the average diversity $K_{T,1}$, which measures the variety of corporations connected to a technology, implies that a higher value reflects diversified publication, whereas a lower value suggests specialization.
+Generally, the average of each indicator is used as a threshold to distinguish high from low values \cite{hidalgo2009eci,balland2017tci, Balland2018}.
+
+Another key indicator is TCI, which represents the sophistication of a technology by reflecting how advanced the knowledge required for its production.
+
+Another key indicator is TCI, which represents the sophistication of a technology as inferred from the structure of the corporation--technology network using the method of reflections.
+Following prior work, we use \(\text{TCI}=0\) as the reference point to distinguish relatively high from low values \cite{balland2017tci}.
+Accordingly, we describe technologies with values above the reference point as relatively high TCI and those below it as relatively low TCI.
+
+To systematically evaluate technological characteristics, we map the relationships among ubiquity $K_{T,0}$, average diversity $K_{T,1}$, and TCI across patent technologies (Fig.~\ref{fig:scatter}).
+Technologies are classified according to the Schmoch system \cite{Schmoch2008}, as illustrated in Panel A of Fig.~\ref{fig:scatter}. Values for ubiquity and average diversity are normalized by their respective means, while TCI is segmented by the zero threshold.
+
+\begin{figure}[ht]
+  \includegraphics[scale=1.15]{Figs/Fig1.eps}
+  \caption{
+  (A) The legend of the five classifications defined by Schmoch \cite{Schmoch2008}, along with an explanation of the technology codes used in Panels (B), (C), and (D).
+  (B) The Ubiquity \(K_{T,0}\) versus average diversity \(K_{T,1}\).
+  (C) The Ubiquity \(K_{T,0}\) versus TCI.
+  (D) The TCI versus average diversity \(K_{T,1}\).
+  The black lines in Panels (B), (C), and (D) indicate the mean values of \(K_{T,0}\) and \(K_{T,1}\), and \(\text{TCI} = 0\) is also shown with a black line. Each dot is color‐coded according to (A).
+  }
+  \label{fig:scatter}
+\end{figure}
+
+We find a negligible correlation between ubiquity $K_{T,0}$ and average diversity $K_{T,1}$ (Pearson correlation coefficient $r=0.064$), indicating that widely disseminated technologies are not necessarily associated with diversified corporate portfolios (Panel B in Fig.~\ref{fig:scatter}). Technologies within Electrical Engineering, for example, typically show low ubiquity and low average diversity, indicating concentrated innovation within narrowly defined technological domains.
+
+Conversely, ubiquity $K_{T,0}$ and TCI exhibit a moderate positive correlation (Pearson correlation coefficient $r=0.594$), suggesting that technologies associated with fewer corporations often require complex capabilities (Panel C in Fig.\ref{fig:scatter}).
+In this context, Electrical Engineering exhibits low ubiquity, low average diversity, and low TCI values, indicating that corporations in this field tend to concentrate their innovation efforts within narrowly defined domains.
+
+Detailed analysis using International Patent Classification (IPC) classes further supports these observations (Fig.~\ref{fig:persector}).
+Within the five major sectors defined by Schmoch \cite{Schmoch2008}, the relationship between ubiquity and average diversity is predominantly weak or moderate. Specifically, Electrical Engineering displays a strong positive correlation between ubiquity and TCI (Pearson correlation coefficient $r=0.738$), highlighting the coexistence of corporations specializing in broadly applicable technologies and those focusing on niche, specialized innovations.
+
+Electrical engineering technologies are predominantly located in the region of low TCI and low average diversity (Panel B in Fig.~\ref{fig:scatter}). In contrast, Chemistry and Pharmaceuticals technologies are clustered in the area of high TCI and high average diversity, exhibiting a positive correlation between these two metrics (Panel D in Fig.~\ref{fig:scatter}; Pearson correlation coefficient $r$=0.316). Furthermore, corporations in the Chemistry and Pharmaceuticals domains are connected not only to fields with low ubiquity but also to those that are more common such as Biotechnology, Analysis of Biological Materials, and Measurement (Panel C in Fig.~\ref{fig:scatter}).
+Thus, these results demonstrate a fundamental difference between the two technological domains. The Chemistry and Pharmaceuticals sectors are characterized by rarity and high sophistication and are typically developed by more diversified corporations. A detailed examination reveals a slight negative correlation between ubiquity and average diversity (Fig.~\ref{fig:persector}), suggesting that in sectors with high technological complexity, corporations with more comprehensive technological portfolios tend to produce rare technologies.
+Furthermore, the IPC classes corresponding to Biotechnology and Measurement show high TCI values in fields related to the production of sugar and yeast (C13, A21, C12), drug discovery (A61, C07), and the preservation of these technologies (C07, A23). These findings are consistent with the socio-technical context of the period, particularly reflecting the emergence of drug discovery technologies in the 1980s and 1990s \cite{Sakakibara2014,Nakamura2022}. Moreover, the significant roles of food chemistry and biotechnology during the 1990s and 2000s underscore their contribution to the development of additives that enabled safer food preservation and processing not only in Japan but globally \cite{Bhatia2018,Murakami2024}.
+
+\subsection{Finer Technological Trends and Consistency}\label{subsection:consistency}
+
+The preceding section focuses on the corporate TCI over the full period from fiscal year 1981 to 2010 and provides a baseline view of technological characteristics in Japan.
+In this section, we explore whether more granular insights into regional technological capabilities can be obtained by comparing the regional- and corporate-level TCIs.
+Specifically, through comparing results derived from the Schmoch classes and the three-digit IPC classes, we examine how classification granularity affects the consistency of technological complexity evaluations across regions and corporations.
+
+The two classification systems share the same technological scope but differ in their level of aggregation.
+The Schmoch system includes 35 broad technology classes, whereas the three digit IPC used in this study contains 124 finer classes.
+Previous studies on regional technological complexity have reported that using finer classifications tends to make the bipartite network sparse and to reduce the consistency of the calculated indicators\cite{morrison2017economic,Tacchella2012}.
+Such inconsistency partly reflects the limited number of regional nodes relative to the number of technology classes.
+In regional analyses, several dozen to a few hundred regions such as countries or EU cities\cite{Hidalgo2021,nepelski2020technological} are connected to several hundred or thousand technology classes, which limits the variation in ubiquity across technologies and produces a biased distribution of TCI.
+By contrast, corporate analyses involve a much larger number of nodes, often exceeding several thousand corporation, and therefore capture a broader range of ubiquity through the iterative calculation.
+
+These tendencies are reflected in the observed distributions of TCI.
+In the regional analysis based on the Schmoch system, 26 out of 35 classes fall within the range of 75 to 100 (Fig.~\ref{fig:detailtci}), indicating that most technologies exhibit similar levels of complexity.
+This limited dispersion is consistent with the small number of regional nodes, which comprises only 47 prefectures in Japan.
+In contrast, the corporate analysis involves 1,939 corporations, resulting in a denser bipartite network that captures greater heterogeneity in technological capabilities.
+Consequently, only 15 classes lie within the same range in the corporate case, while the remaining classes show a wider spread of TCI values across technologies.
+This broader dispersion suggests that the corporate analysis captures the variation in ubiquity more effectively, revealing distinct differences in how frequently each technology appears across corporations.
+
+\begin{figure}[ht]
+  \includegraphics[scale=1.35,trim=7mm 0 0 0,clip]{Figs/Fig2.eps}
+  \caption{
+    (A) The TCI scores of 124 IPC first three-digit classes and 35 Schmoch classes for both prefectures and corporations.
+    The scores have been scaled to values ranging from 0 to 100.
+    For ease of comparison across classifications, TCI values are rescaled to range from 0 to 100 for presentation.
+    The midpoint corresponding to \(\mathrm{TCI}=0\) in the original scale is used as the reference when distinguishing relatively high and low values.
+    Each IPC is plotted against the corresponding Schmoch axis, and in cases of multiple correspondences, that is, Schmoch class ``Chemical Engineering'' maps to IPC classes B01 to B08, C14, and others, IPC classes are plotted individually.
+    (B) The distribution of the absolute differences between TCI of IPC and of Schmoch classes.
+  }
+  \label{fig:detailtci}
+\end{figure}
+
+The difference between the approaches becomes even clearer when using a finer classification.
+When the classification becomes more detailed and the number of technology nodes increases, the regional approach cannot define ubiquity sufficiently.
+In the case of Civil engineering, the variance of TCI values for IPC classes corresponding to the same Schmoch class is larger than that for the corporate approach.
+The larger difference between the TCI values of the coarse classification and those of the finer classification indicates a greater inconsistency in the evaluation for the regional approach.
+A Mann-Whitney U test shows that the distribution of residuals between the TCI values of the Schmoch and IPC classes is significantly different (U = 7495.5, $p$ value = 6.55e-15, $\gamma$ value = 0.60), and that the residuals for the corporate analysis are smaller than those for the regional analysis (Panel B in Fig.~\ref{fig:detailtci}).
+Smaller residuals imply that the corporate TCI is less affected by the choice of classification level and provides a more consistent measure of technological complexity.
+This result suggests that the corporate network captures the co-occurrence patterns of technologies more precisely because of the larger number of corporation nodes and the finer granularity of technological connections.
+Hence, the corporate analysis offers a more stable representation of how diverse and rare capabilities are combined in actual technological activities.
+These consistent and detailed trends are observed not only over the 30-year period but also in shorter five-year intervals (SI Fig.~\ref{fig:bump}).
+Although firms undergo entry, exit, mergers, and strategic shifts over such a long period, the relative positioning of technologies remains structurally stable.
+The firm-level ranking transitions provided in the Supplementary Information further illustrate that corporate composition changes over time, yet the aggregated technological patterns persist.
+For example, in the IPC classes related to Food Chemistry, a persistently high TCI is observed for sugars (C13) and baking technologies (A21) throughout the 2000s.
+By contrast, foodstuffs (A23) and agriculture-related technologies (A01) show gradual declines in ranking, particularly after the mid-1990s.
+This indicates that even within related technological fields, some areas maintain their complexity advantage while others lose ground.
+These results confirm that the relative positioning of technologies can be captured in a stable and systematic manner across different time resolutions.
+
+Corporate analyses are useful not only for examining technological structures at finer classification and temporal scales but also for capturing spatial characteristics in greater detail than regional analyses.
+While previous regional studies have mainly compared aggregate indicators such as the average TCI or the presence of links to certain technologies, the corporate analysis enables a direct comparison of each technology's TCI between different regions.
+Regional comparisons are informative because similarity or divergence in corporate TCI across prefectures can reveal distinctive industrial bases and specialization patterns.
+We compare cross-prefectural alignment by pairing Tokyo, Osaka, and Aichi, and interpret the class-level correspondence from the concentration around the diagonal and notable deviations in the scatter plots (Fig.~\ref{fig:prefcompare}).
+Each plotted point represents the TCI of a specific technological class calculated from the corporation--technology network restricted to corporations within the corresponding prefecture.
+Tokyo and Osaka exhibit a close correspondence across many fields, which reflects a strong resemblance in their technological structures.
+Tokyo and Aichi show a looser association in which Aichi tends to be stronger in electronics and ICT, for example Computing (G06) and Telecommunications (H04), while Tokyo shows relative strengths in consumer goods and light manufacturing, for example Printing and Bookbinding (B42) and Lighting Technology (F21).
+The pair of Osaka and Aichi diverges the most, with Aichi again relatively strong in electronics, for example Computing (G06) and Basic Electronic Circuitry (H03), whereas Osaka appears higher in manufacturing-oriented areas, for example Presses (B30) and Decorative Arts and Processes (B44).
+This pattern may highlight that Aichi's technological profile diverges not only from Tokyo but also from Osaka, reflecting a distinctive regional specialization in electronics and ICT.
+The corporate analysis thus makes finer regional technological characteristics visible within each prefecture than the regional-level analysis.
+
+\begin{figure}[ht]
+  \includegraphics[scale=0.35]{Figs/Fig3.eps}
+  \caption{Three scatter plots arranged in a single row compare the Corporate TCI between pairs of prefectures.
+  For each prefecture, a separate corporation--technology bipartite network is constructed, and TCI is calculated based on corporations located in that prefecture.
+  The left panel compares Osaka with Tokyo, the middle panel compares Aichi with Tokyo, and the right panel compares Aichi with Osaka.
+  Each axis ranges from 0 to 100.
+  Black points represent individual technological classifications, and the red dashed line indicates the diagonal reference line.}
+  \label{fig:prefcompare}
+\end{figure}
+
+\section{Discussion}\label{section:Discussion}
+
+This study calculates the Technological Complexity Index (TCI) using Japanese patent data identify sophisticated technologies critical to innovation, and provides three primary contributions.
+First, it demonstrates methodological robustness at the corporate level.
+Unlike regional approaches, corporate-level TCI retains consitent technological rankings even when classifications become highly detailed.
+Our results reveal high complexity in the Pharmaceuticals and Chemistry sectors, likely reflecting Japan's industrial focus during the pharmaceutical industry's formative period.
+This consistency across classification scales represents significant progress compared to previous regional analyses that lost reliability when switching from broader to finer classifications.
+
+Second, by visualizing the temporal evolution of rankings, this study clarifies which technologies appear to have sustained innovative activity during Japan's prolonged period of modest economic growth.
+The corporate level lens makes these trajectories easier to read because rankings remain stable enough to track long run patterns while still capturing meaningful changes.
+This perspective highlights fields that persist at high complexity as well as those that rise or fade, providing a more concrete basis for interpreting how Japan's innovation system has been supported over time.
+
+Third, the corporate level approach also enables a finer view of regional technological characteristics.
+By attributing firms to places and then examining their technological portfolios, we can recover local profiles that are obscured by coarse regional aggregates.
+This yields clearer distinctions among prefectures and urban areas and helps identify locally salient capabilities that may be missed when analysis is performed only at the regional level.
+
+At the same time, there are limits that point to future work.
+Although long aggregation windows improve statistical stability, they may obscure path dependent and dynamic processes in technological development, making it difficult to detect emerging trajectories and transitional phases.
+In particular, the role of emerging technologies in shaping subsequent technological development through complexity related mechanisms \cite{juhasz2021explaining} may not be fully visible when long time spans are pooled.
+Detecting dynamic shifts therefore requires a balance between longer windows that improve stability and shorter windows that capture emerging fields.
+
+Also, beyond temporal aggregation, additional limitations arise from how the bipartite network is constructed and how complexity is inferred from it.
+In particular, constructing the network requires an operational link rule, such as an RCA type criterion or a minimum patent count threshold, but when patent activity is sparse these rules may fail to capture technological engagement accurately and can result in sparse bipartite networks that make complexity estimation unstable \cite{PintarEssletzbichler2022}.
+To mitigate this sparsity problem, future work can refine both the link rule and the information carried by each link.
+One direction is to move from unweighted to weighted edges that reflect the intensity and impact of inventive activity \cite{ivanova2017economic}.
+Citation based measures are natural candidates, such as raw citations, family normalized citations, or time decayed citations, which may represent technological effort and impact more precisely than simple counts \cite{PintarScherngell2022}.
+Another direction is to adopt alternative iterative schemes such as the Fitness Complexity algorithm \cite{Tacchella2012}, which uses non linear iterations to capture structure in sparse settings and may yield more robust rankings \cite{Wu2016,Albeaik2017}.
+
+Building on these methodological directions, future research should examine how such refinements affect the robustness and generality of TCI.
+External validation will be important to assess whether corporate level TCI captures information beyond standard corporate indicators, including comparisons with citation based indicators, alternative weighting schemes, and innovation performance outcomes such as R\&D expenditure, productivity, and forward looking patent impact \cite{sweet2019patent, audretsch2021knowledge, mewes2022technological}.
+Predictive modelling can then use these enriched features to anticipate shifts in technological rankings, including time series forecasting approaches, representation learning models, and graph based models such as graph neural networks that directly exploit the bipartite structure \cite{tacchella2023relatedness}.
+Cross regional or national analyses \cite{straccamore2023urban, straccamore2025comparative} will test whether the corporate level stability observed for Japan also appears in other innovation systems, while benchmarking across OECD countries can help evaluate generalizability under different institutional and industrial contexts.
+This study advances the corporate level understanding of technological complexity in Japan.
+By identifying high complexity technology fields with greater consistency, it provides evidence that may inform strategic planning and policy design in a period of rapid technological change and intensifying global competition.
+
+\section{Methods}\label{section:Methods}
+
+\subsection{Data}\label{subsection:Data}
+
+The dataset utilized in this study comprises registered patents submitted to the Japan Patent Office (JPO) covering fiscal years 1981 through 2010, encompassing detailed records of 3,189,536 patents filed by 64,622 corporations. Patent records adhere to the International Patent Classification (IPC) system and are further categorized according to the Schmoch classification \cite{Schmoch2008}.
+
+The Schmoch system aggregates IPC codes into 35 distinct technological fields, ensuring balanced class sizes and technological consistency, and has been widely applied in previous research \cite{PintarScherngell2022,Balland2018,Whittle2019}. Nevertheless, the granularity of classification substantially influences analytical outcomes. Administrative classifications vary markedly in granularity and international comparability, potentially introducing analytical noise or biases if inadequately managed \cite{Hidalgo2021}. Employing consistent classification schemes, exemplified by the Schmoch system utilized in this study, mitigates such issues by providing balanced and coherent technological categories for robust analyses.
+
+Traditional methods for measuring patent contributions typically employ raw patent counts \cite{Balland2016,Balland2018,PintarScherngell2022,Pinheiro2022,Whittle2019,Jun2023,Abay2024}. However, such counting methods can lead to overestimation, particularly when patents involve multiple corporations or span multiple technological domains \cite{PintarScherngell2022}. To address potential overestimations, the primary IPC class of each patent is mapped onto the corresponding Schmoch field, with patent value fractionally allocated by equally dividing it among associated corporations and technological fields. This fractional allocation prevents overestimation arising from multi-corporation ownership or cross-domain classifications.
+
+The regional approach evaluates technological complexity as a relative index that reflects regional technological capabilities.
+However, this method is sensitive to spatial disparities and tends to yield less stable results when finer classifications such as IPC classes are used, compared to broader classifications like the Schmoch system \cite{PintarEssletzbichler2022}.
+Such instability appears in both regional and technological complexity evaluations, as it is inherent in the symmetric structure of the underlying bipartite network.
+
+In this study, we analyze technological complexity at the corporate level to overcome these limitations and achieve a more detailed understanding of regional technological portfolios.
+Additionally, filtering criteria are essential to exclude extreme cases capable of distorting analytical outcomes \cite{Hidalgo2021,PintarScherngell2022}. Accordingly, a filtering criterion based on patent distribution per corporation is applied in this study, retaining only the top 3\% of corporations in patent output (Fig.~\ref{fig:patentdistribution}). This filtering criterion excludes corporations exhibiting minimal patenting activity, thereby reducing significant analytical noise in network analyses. Following this filtering, the dataset comprises 2,900,359 patents filed by 1,939 corporations, representing approximately 91\% of the original patent volume.
+
+Utilizing these filtered data, technological complexity is based on a bipartite network connecting corporations to technological fields in which they are specialized. Although there are some arguments regarding the optimal specialization index for establishing connections within these networks \cite{PintarScherngell2022}, we follows prior research by employing the Revealed Technological Advantage (RTA) index \cite{Soete1987}.
+The RTA index builds upon the revealed comparative advantage framework proposed by Balassa \cite{Balassa1965}. Specifically, the RTA index builds upon the revealed comparative advantage framework proposed by Balassa \cite{Balassa1965}.
+Specifically, the RTA index for a given corporation in a specific technological field measures the ratio between the share of patents held by corporation \(C\) in technology \(T\) and the share of patents in technology \(T\) among all corporations.
+The numerator of the RTA index captures the fraction of patent activity devoted to technology \(T\) for corporation \(C\).
+Similarly, the denominator reflects the overall share of patent activity in technology \(T\) among all corporations, computed as the sum of \(W_{CT}\) over all corporations divided by the sum of \(W_{CT}\) over all corporations and technologies.
+The RTA index is thus given by
+
+\begin{equation}\label{eq1}
+\mbox{RTA}_{CT} = \frac{W_{CT}}{\sum_{T} W_{CT}} \Bigg/ \frac{\sum_{C} W_{CT}}{\sum_{CT} W_{CT}}~.
+\end{equation}
+
+We consider that RTA index values of 1 or greater indicate that corporation \(C\) holds a prominent technological advantage in technology \(T\). Based on this threshold, a binary adjacency matrix of the bipartite network \(M_{CT}\) is defined by
+
+\begin{equation}\label{eq2}
+M_{CT} =
+\begin{cases}
+1 & \text{if } \mbox{RTA}_{CT} \geq 1, \\
+0 & \text{otherwise}.
+\end{cases}
+\end{equation}
+
+\subsection{Technological Complexity}\label{subsection:technologicalcomplexity}
+
+The binary matrix \(M_{CT}\) forms the two metrics which characterize each node in the bipartite network by the sum of connections, known as degree centrality. The diversity of corporations \(K_{C,0}\) quantifies the number of technologies in which a corporation is specialized, and indicated by $M_{CT}$.
+Similarly, the ubiquity of technologies \(K_{T,0}\) represents the number of corporations that exhibit a technological advantage in a given field. These quantities are computed as
+
+\begin{equation}\label{eq3}
+\begin{aligned}
+K_{C,0} = \sum_{T} M_{CT},  \\
+K_{T,0} = \sum_{C} M_{CT}~.
+\end{aligned}
+\end{equation}
+
+Higher diversity values indicate corporations with broad technological capabilities, while lower ubiquity values signify that the technologies are rare.
+Through calculating these two characteristics of adjacent nodes iteratively, the diversity and ubiquity of each node is updated as
+
+\begin{equation}\label{eq4}
+K_{C,N} = \frac{1}{K_{C,0}} \sum_{T} M_{CT}\, K_{T,N-1},
+\end{equation}
+
+\begin{equation}\label{eq5}
+K_{T,N} = \frac{1}{K_{T,0}} \sum_{C} M_{CT}\, K_{C,N-1}.
+\end{equation}
+
+Here, the metric \(K_{T,1}\) represents the average nearest neighbor degree for technology nodes and it reflects the average diversity of corporations connected to a given technology.
+Substituting Eq.~(\ref{eq4}) into Eq.~(\ref{eq5}) yields
+
+\begin{equation}\label{eq6}
+K_{T,N} = \sum_{T'} \widetilde{M}_{TT'} K_{T',N-2}
+\end{equation}
+
+where \(T'\) denotes a technological field, and $\widetilde{M}_{TT'}$ is defined as
+
+\begin{equation}\label{eq7}
+\widetilde{M}_{TT'} = \sum_{C} \frac{M_{CT}\, M_{CT'}}{K_{C,0}\, K_{T,0}}~.
+\end{equation}
+
+Eq.~(\ref{eq6}) is satisfied when \(K_{T,N} = K_{T,N-2} = 1\), which corresponds to the eigenvector associated with the largest eigenvalue of the stochastic matrix \(\widetilde{M}_{TT'}\).
+Since this eigenvector is a vector of ones and not informative, the eigenvector corresponding to the second largest eigenvalue of \(\widetilde{M}_{TT'}\) captures the greatest variance among technology fields \cite{Hidalgo2021, Mealy2019}.
+Thus, TCI is given by
+\begin{equation}\label{eq8}
+TCI = \frac{\widetilde{T} - \langle \widetilde{T} \rangle}{\text{stdev}(\widetilde{T})},
+\end{equation}
+
+where \(\widetilde{T}\) represents the eigenvector corresponding to the second largest eigenvalue of \(\widetilde{M}_{TT'}\), and \(\langle \widetilde{T} \rangle\) is their mean and \(\text{stdev}(\widetilde{T})\) is their standard deviation.
+
+\backmatter
+
+\bmhead{Supplementary information}
+
+Three supplementary figures are provided in Appendix~\ref{secA1}:
+Fig.~S1 shows the Pearson correlations between ubiquity, average diversity, and TCI stratified by Schmoch sector.
+Fig.~S2 shows the five-year rolling TCI rankings based on 124 three-digit IPC classes for corporate and regional analyses.
+Fig.~S3 shows the distribution of weighted patent counts per corporation and the cumulative distribution function.
+
+\section*{Declarations}
+
+\textbf{Availability of data and materials:} The patent data utilized in this study were obtained from the Japan Patent Office (JPO) via the J-platPat portal (\url{https://www.j-platpat.inpit.go.jp/}). Records published within the most recent twelve months are directly downloadable; data older than one year can be provided by the JPO upon reasonable request. Patent classification concordance tables mapping International Patent Classification (IPC) classes to Schmoch technology fields were acquired from the World Intellectual Property Organization (WIPO) IP Statistics portal (\url{https://www.wipo.int/en/web/ip-statistics}).
+
+\textbf{Code availability:} All scripts and code used to compute the Technological Complexity Index and reproduce the results of this paper are publicly available in the following GitHub repository: \url{https://github.com/RintaroKARASHIMA/KCIinJapaneseFirms}.
+
+\textbf{Competing interests:} The authors declare no competing interests.
+
+\textbf{Funding:} This work was supported by Japan Society for the Promotion of Science KAKENHI Grant-in-Aid for Scientific Research (B) Grant Numbers JP25K01454 and JP24K00247, and Watanabe Memorial Foundation for the Advancement of New Technology FY2024 Science and Technology Research Grant Number R6-590. The funders had no role in study design, data collection and analysis, decision to publish, or preparation of the manuscript.
+
+\textbf{Authors' contributions:} H.I. conceived the main research idea, designed the study, collected the data, and secured the funding. R.K. performed the analysis and drafted the manuscript. Both H.I. and R.K. critically reviewed the results, discussed the findings, contributed to the revisions of the manuscript, and approved the final version of the manuscript.
+
+\textbf{Acknowledgements:} This work was supported by Japan Society for the Promotion of Science KAKENHI Grant-in-Aid for Scientific Research (B) Grant Numbers JP25K01454 and JP24K00247, and Watanabe Memorial Foundation for the Advancement of New Technology FY2024 Science and Technology Research Grant Number R6-590. The funders had no role in study design, data collection and analysis, decision to publish, or preparation of the manuscript.
+
+\begin{appendices}
+
+\section{Supplementary Figures}\label{secA1}
+
+\renewcommand{\thefigure}{S\arabic{figure}}
+\setcounter{figure}{0}
+
+\begin{figure}[ht]
+    \includegraphics[scale=2.5]{Figs/FigA1.eps}
+    \caption{The Pearson correlation between the degree centrality \( K_{T,0} \) of technology node \( T \) classified by IPC and the average nearest neighbor degree \( K_{T,1} \), and the Pearson correlation between the degree centrality \( K_{T,0} \) of technology field node \( T \) and TCI. In both figures, the black lines indicate the mean values. Each data point is color-coded according to the five classifications defined by Schmoch\cite{Schmoch2008}.}
+    \label{fig:persector}
+\end{figure}
+
+\begin{figure}[ht]
+    \includegraphics[scale=1.35]{Figs/FigA2.eps}
+    \caption{Changes in the five-year rolling ranking of the TCI based on 124 three-digit IPC classes for
+      (A) the corporate analysis and
+      (B) the regional analysis.
+      The lines color-coded according to the one-digit IPC classes.
+    }
+    \label{fig:bump}
+\end{figure}
+
+\begin{figure}[ht]
+    \includegraphics[scale=0.75]{Figs/FigA3.eps}
+    \caption{The distribution of weighted patent counts (horizontal axis) for each corporation, with the cumulative distribution function (CDF) of their patents on the vertical axis. The black dashed lines on both axes indicate the excluded region, corresponding to the top 3\% of corporations that account for 93\% of all patents.}
+    \label{fig:patentdistribution}
+\end{figure}
+
+\end{appendices}
+
+\bibliography{sn-bibliography}
+
+\end{document}
