@@ -1,0 +1,79 @@
+name: Build revision diff
+
+# 投稿時の原稿(baseline)と現在の原稿の差分を latexdiff で可視化し、
+# 変更箇所に色/取り消し線を付けた PDF を artifact として出力する。
+# 指導教員・共著者に「どこを直したか」を見せるための成果物であり、
+# コンパイル成果物はリポジトリにはコミットしない(CLAUDE.md の方針)。
+
+on:
+  workflow_dispatch:
+    inputs:
+      baseline:
+        description: '比較元の ref(タグ / ブランチ / コミットSHA)'
+        required: true
+        default: 'submitted'
+  push:
+    branches: [main]
+
+jobs:
+  diff:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Resolve baseline ref
+        id: baseline
+        run: |
+          BASELINE="${{ github.event.inputs.baseline }}"
+          BASELINE="${BASELINE:-submitted}"
+          if ! git rev-parse --verify "${BASELINE}^{commit}" >/dev/null 2>&1; then
+            echo "::error::baseline ref '${BASELINE}' が見つかりません。タグ 'submitted' を投稿時のコミットに付けて push してください。"
+            exit 1
+          fi
+          echo "ref=${BASELINE}" >> "$GITHUB_OUTPUT"
+          echo "sha=$(git rev-parse --short "${BASELINE}^{commit}")" >> "$GITHUB_OUTPUT"
+
+      - name: Extract baseline manuscript
+        run: |
+          mkdir -p build/old
+          git show "${{ steps.baseline.outputs.ref }}:sn-article.tex" > build/old/sn-article.tex
+          # baseline 時点の bib が無いケース(新規追加)でも落ちないようにする
+          git show "${{ steps.baseline.outputs.ref }}:sn-bibliography.bib" > build/sn-bibliography-old.bib || true
+
+      - name: Run latexdiff and compile
+        run: |
+          docker run --rm -v "$PWD:/work" -w /work texlive/texlive:latest bash -eo pipefail -c '
+            # このオプションの組み合わせはローカル(WSL + texlive)で動作確認済み。
+            # "Wide character in print" の警告は baseline 側の非ASCII文字由来で無害。
+            latexdiff \
+              --encoding=utf8 \
+              --append-safecmd="cite,ref,eqref,label,url,fnm,sur,email,orgdiv,orgname,orgaddress,street,city,postcode,state,country,affil,equalcont" \
+              build/old/sn-article.tex sn-article.tex > diff.tex
+
+            # 現行の bib / cls / bst / 図をそのまま使って diff.tex をコンパイルする
+            latexmk -pdf -interaction=nonstopmode -halt-on-error -shell-escape diff.tex || \
+            latexmk -pdf -interaction=nonstopmode -shell-escape diff.tex
+          '
+
+      - name: Rename output
+        if: always()
+        run: |
+          mkdir -p out
+          [ -f diff.pdf ] && cp diff.pdf "out/diff-${{ steps.baseline.outputs.sha }}-to-${GITHUB_SHA::7}.pdf" || true
+          [ -f diff.tex ] && cp diff.tex "out/diff-${{ steps.baseline.outputs.sha }}-to-${GITHUB_SHA::7}.tex" || true
+          [ -f diff.log ] && cp diff.log out/ || true
+
+      # PDF が出れば PDF を、コンパイルに失敗しても diff.tex は残す
+      # (Overleaf に diff.tex を貼れば手元でコンパイルできる)
+      - name: Upload diff
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: revision-diff
+          path: out/
+          if-no-files-found: error
+          retention-days: 90
