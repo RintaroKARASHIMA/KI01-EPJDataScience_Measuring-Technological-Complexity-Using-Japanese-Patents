@@ -1,0 +1,40 @@
+# Referee Report
+
+## Summary and overall assessment
+
+The manuscript computes the Technological Complexity Index (TCI) from Japanese patent data for fiscal years 1981–2010, using the method of reflections on a bipartite network that links corporations to technology classes rather than the regions used in most prior work. The authors report three contributions: first, that a corporate-level TCI yields more consistent technology rankings across classification granularities (35 Schmoch classes versus 124 three-digit IPC classes) than a regional-level TCI; second, that five-year rolling rankings reveal stable-yet-legible temporal trajectories; and third, that attributing firms to prefectures recovers finer regional technological profiles than regional aggregates. The substantive estimates locate high complexity in pharmaceuticals, chemistry, and food chemistry.
+
+The topic is interesting, the data are large and well documented, and the code is shared, which I welcome. However, I have serious reservations about novelty and about whether the central claim is actually established by the evidence presented. In its current form I do not think the paper clears the bar for publication.
+
+The core methodological claim is that moving the row actor of the bipartite network from regions to firms produces a "better" complexity measure, where "better" is operationalised as greater consistency of the TCI ranking when the technology classification is refined from Schmoch to IPC. I have two fundamental concerns with this claim, and a third about what the paper adds beyond it.
+
+First, the consistency gain of the TCI is confounded with node count and may be mechanical rather than a property of the corporate level per se. Second, consistency is a necessary but not a sufficient condition for a useful measure; the paper never shows that the corporate TCI carries information that the regional TCI does not. Third, once these are set aside, the remaining substantive findings largely recover known stylised facts. Each is developed below.
+
+## Major comments
+
+### 1. The stability result confounds the level of aggregation with the number of actor nodes.
+
+The headline comparison sets 47 prefectures against 1,939 corporations. These differ in two respects at once: the level (region versus firm) and the number of actor nodes (47 versus 1,939, a factor of roughly 40). The mechanism the authors themselves describe — that more actor nodes enrich the variation in ubiquity and thereby de-compress the eigenvector that defines TCI — is a mechanism of node count, not of the corporate level. Hence the design cannot attribute the observed gain in cross-classification consistency to firms being the appropriate unit of analysis; the same gain would be expected from any actor set that is simply larger and denser.
+
+This is the crux of the paper and it is not currently identified. To isolate the level from the count, the authors would need to hold node count approximately fixed and vary only the level. Two concrete tests: (i) subsample the corporate network down to 47 firms — or draw firm sets of increasing size, 47, 100, 500, 1,939 — and show that the consistency improvement is present at matched rather than emerging only as grows; and (ii) disaggregate the regional side (municipalities, functional urban areas, or a spatial grid) to raise the number of regional nodes, and test whether the regional measure's consistency converges to the corporate one. If it does, the paper's finding is "more nodes yield a more stable eigenvector," which is already understood in this literature and would not constitute a novel contribution.
+
+### 2. Consistency is not validity; the superiority claim requires external or predictive evidence.
+
+The paper equates "more consistent across classification levels" with "more reliable" and "significant progress". However, a measure can be perfectly stable and entirely uninformative; a constant is the limiting case. Smaller residuals between the Schmoch and IPC rankings (Fig. 2B) are equally consistent with two readings: the corporate measure is more accurate, or the corporate measure over-smooths and is insensitive to genuine granular signal because it is dominated by a small number of high-degree firms. The internal-consistency metric cannot distinguish these.
+
+The only way to break the tie is to show that the corporate TCI predicts something external that the regional TCI predicts less well — R&D intensity, productivity, forward-looking patent impact, or future technological entry and diversification at the region or firm level. The authors are aware of this; they defer precisely this validation to future work. Hence, as the manuscript stands, its central superiority claim rests on an internal metric that I have argued in comment 1 may be mechanical. I regard a predictive or external-validation exercise not as a desirable extension but as a condition for the paper's main claim to be supported at all. I would want to see, at minimum, one out-of-sample task in which corporate and regional TCI are compared head to head on an outcome neither is constructed from.
+
+### 3. The 3% filter is under-justified and is not subjected to any sensitivity analysis, and it interacts with the stability claim.
+
+Retaining only the top 3% of corporations by patent output is defensible in isolation — those firms hold roughly 91% of weighted patents, so the volume loss is small. However, three problems follow. First, the threshold is arbitrary and no robustness check varies it; given that the whole paper is about the stability of the resulting index, the reader needs to see the TCI ranking and the Fig. 2 consistency comparison reproduced at 1%, 5%, and 10%. Second, and more importantly, the filter is exactly the operation that manufactures the dense corporate network on which the stability advantage depends; if the advantage weakens as the filter is loosened toward the full firm set, comment 1's confound is confirmed from a second direction. Third, it is not clear whether the regional TCI is computed on the same filtered patent set or on all firms aggregated to prefectures. If the two sides use different underlying data, the Fig. 2 comparison is not like-for-like and the Mann–Whitney test in comment 6 is uninterpretable. Please state this explicitly and align the two.
+
+### 4. Novelty.
+
+Setting the technical concerns aside, the conceptual step is to swap the row actor of an otherwise standard MoR/ECI computation from regions to firms, applied to one country. Firm-level and micro-level complexity measurement is not itself new, and the estimator, the RTA construction, and the eigenvector definition are all standard. The substantive findings — Japan's strength in pharmaceuticals, chemistry, and food chemistry; Aichi's specialisation in electronics and ICT (the Nagoya–Toyota corridor); the close Tokyo–Osaka resemblance — are, as far as I can tell, well-established stylised facts that a reader familiar with Japanese industrial geography would anticipate. Recovering known facts is legitimate as validation, but here it is presented as a contribution.
+
+## Minor comments
+
+1. There are duplicated sentences in the text, which suggests the manuscript was not proofread before submission: the TCI definition appears twice (lines 129–135), and the RTA/Balassa sentence is repeated verbatim (lines 484–487).
+2. The retained patent share is reported inconsistently: the Methods state approximately 91% (line 476), while the Fig. S3 caption states 93% (line 714). The arithmetic (2,900,359 / 3,189,536) gives 90.9%, so the figure caption appears to be the error.
+3. Several grammatical slips remain: "data identify" is missing an infinitive (line 371); "consitent" (line 373); "we follows" (line 481). A careful language pass is needed independent of the substantive revision.
+4. The reference list contains incomplete entries ("Publishing, ??? (2019)", "??? (2023)"), visible in the attached markup. Please complete these.
